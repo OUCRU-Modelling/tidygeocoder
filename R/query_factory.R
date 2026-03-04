@@ -243,6 +243,17 @@ query_api <- function(api_url, query_parameters, mode = "single",
     
     # get the reference id of the first result
     ref_id <- raw_results[1, "ref_id"]
+    # also get the alternative display address (i.e., new address if display_type = 6) if available
+    # this is a work around for VietMap since Vietnam just updated their admin level
+    # i.e., one location can be geocoded to new or old address
+    display_alt <- if(length(raw_results[1,"data_old"]) > 1){
+      raw_results[1,"data_old"]["display"][[1]]
+    }else if(length(raw_results[1,"data_new"]) > 1){
+      raw_results[1,"data_new"]["display"][[1]]
+    }else{
+      NULL
+    }
+    
     # finally, query the geocode
     response <- httr::GET("https://maps.vietmap.vn/api/place/v4", 
               query = list(
@@ -252,6 +263,13 @@ query_api <- function(api_url, query_parameters, mode = "single",
     
     httr::warn_for_status(response)
     content <- httr::content(response, as = "text", encoding = content_encoding)
+    
+    # work around to include the alternative display address in the content 
+    full_geo_content <- jsonlite::fromJSON(content)
+    if(!is.null(display_alt)){
+      full_geo_content[["display_alt"]] <- display_alt
+    }
+    content <- jsonlite::toJSON(full_geo_content)
   }
 
   return(list(
