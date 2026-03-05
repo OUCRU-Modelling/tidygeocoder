@@ -60,10 +60,17 @@ geo_content <- jsonlite::toJSON(full_geo_content)
 
 # ==== Test high level code ====
 # uncomment to rerun query
-# test_res <- tidygeocoder::query_api(url,
-#                                     api_query_params, method="vietmap")
-tidygeocoder::extract_results("vietmap", jsonlite::fromJSON(test_res$content))
-tidygeocoder::extract_results("vietmap", jsonlite::fromJSON(test_res$content), full_results = FALSE)
+test_res <- tidygeocoder::query_api(url,
+                                    api_query_params, method="vietmap")
+ful_res <- tidygeocoder::extract_results("vietmap", jsonlite::fromJSON(test_res$content))
+min_res <- tidygeocoder::extract_results("vietmap", jsonlite::fromJSON(test_res$content), full_results = FALSE)
+
+#  test unpackage input part
+addr_pkg <- tidygeocoder:::package_addresses(addr)
+tidygeocoder:::unpackage_inputs(
+  addr_pkg, ful_res, 
+  return_inputs=TRUE,
+  unique_only = FALSE)
 
 # Try geo() function
 # uncomment to test querying
@@ -72,8 +79,8 @@ tidygeocoder::extract_results("vietmap", jsonlite::fromJSON(test_res$content), f
 #   method = "vietmap",
 #   lat = latitude,
 #   long = longitude,
-#   api_options = list(
-#     "vietmap_display_type" = 6
+#   custom_query = list(
+#     "display_type" = 6
 #   ),
 #   full_results = TRUE
 # )

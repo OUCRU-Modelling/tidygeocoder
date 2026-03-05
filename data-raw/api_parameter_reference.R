@@ -148,8 +148,7 @@ api_parameter_reference <- tibble::tribble(
   # display_type options: https://maps.vietmap.vn/docs/map-api/geocode-version/geocode-v4/#display-type-options
   
   "vietmap", "api_key", "apikey", NA, TRUE,
-  "vietmap", "address", "text", NA, TRUE,
-  "vietmap", NA, "display_type", 6, FALSE,
+  "vietmap", "address", "text", NA, TRUE
 )
 
 usethis::use_data(api_parameter_reference, overwrite = TRUE)
